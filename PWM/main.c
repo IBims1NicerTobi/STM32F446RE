@@ -16,6 +16,7 @@ RCC   -> CFGR     |= (1<<15);                                 //AHB2 prescaler =
 RCC   -> CFGR     |= (1<<1);                                  //sets PLL as main clock input
 
 //Set up PA8(Timer1/Channel1 Output)
+RCC   -> AHB1ENR  |= (1<<0);     //enables clock for GPO PA
 GPIOA -> MODER    |= 0x00020000; //PA Pin 8 as Alternate Function
 GPIOA -> OTYPER   |= 0x00000000; //PA Pin 8 as Push/Pull
 GPIOA -> OSPEEDR  |= 0x00030000; //PA Pin 8 as High speed
@@ -50,10 +51,5 @@ TIM1  -> CR1      |= 0x0001;
 
 while(1)
   {
-    //main loop
-    for(uint64_t time = 0; time<1000000; time=time+1);
-    TIM1  -> CCR1     = 0;
-    for(uint64_t time = 0; time<1000000; time=time+1);
-    TIM1  -> CCR1     = 150;
   }
 }
