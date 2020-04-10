@@ -9,11 +9,17 @@ RCC   -> PLLCFGR  |= (1<<4);                                  //set PLLM prescal
 RCC   -> PLLCFGR  &= ~(0x7FC0);                               //Clears PLL multimpiler
 RCC   -> PLLCFGR  |= ((1<<9) | (1<<11) | (1<<12) | (1<<14));  //PLL multimpiler *360
 RCC   -> CR       |= (1<<24);                                 //enables PLL
-PWR   -> CR       |= (1<<17);                                 //enables overdrive mode
+RCC   -> APB1ENR  |= (1<<28);                                 //enables clock for PWR module
+PWR   -> CR       |= (1<<16);                                 //enables overdrive mode
+while(~(PWR -> CSR)&(1<<16));                                 //check ODRDY in PWR_CSR
+PWR   -> CR       |= (1<<17);                                 //Switch to overdrive mode
+while(~(PWR -> CSR)&(1<<17));                                 //check ODSWRDY in PWR_CSR
 FLASH -> ACR      |= ((1<<0) | (1<<2));                       //5 wait states
 RCC   -> CFGR     |= ((1<<10) | (1<<12));                     //AHB1 presclaer = /4
 RCC   -> CFGR     |= (1<<15);                                 //AHB2 prescaler = /2
+while(~(RCC -> CR)&(1<<25));                                  //wait for PLL to be ready
 RCC   -> CFGR     |= (1<<1);                                  //sets PLL as main clock input
+
 
 //Set up PA8(Timer1/Channel1 Output)
 RCC   -> AHB1ENR  |= (1<<0);     //enables clock for GPO PA
